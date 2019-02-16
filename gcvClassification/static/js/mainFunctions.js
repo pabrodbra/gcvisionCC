@@ -20,11 +20,9 @@ function requestResize(){
     console.log("Button pressed!");
     console.log(image);
 
-    var sizes = getCheckedSizes(); //["640 x 480", "800 x 600", "1024 x 768", "1280 x 1024", "1600 x 1200", "1680 x 1050", "1920 x 1200"]
     var formData = new FormData();
     if(formData){
         formData.append("image", image);
-        formData.append("sizes", sizes);
     }
 
     for (var key of formData.entries()) {
@@ -42,12 +40,6 @@ function requestResize(){
             var urls = content.urls;
             var tableBody = document.getElementById("linksTableBody")
             tableBody.innerHTML = "";
-            sizes = sizes.split(";")
-
-            for(sizeIndex in sizes){
-                var newRow = tableBody.insertRow(tableBody.rows.length);
-                newRow.innerHTML = "<th>" + sizes[sizeIndex] + "</th><th>" + urls[sizeIndex] + "</th>"
-            }
             //document.getElementById("sendImage").disabled = true;
         }
     });
