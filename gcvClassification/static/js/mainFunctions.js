@@ -13,10 +13,10 @@ fileInput.addEventListener('change', function() {
 }, false);
 
 /*
-AJAX Request to resize image
+AJAX Request to classify image through Google Cloud API
 */
 
-function requestResize(){
+function labelImage(){
     console.log("Button pressed!");
     console.log(image);
 
@@ -31,27 +31,18 @@ function requestResize(){
 
     $.ajax({
         type:"POST",
-        url:"/resize",
+        url:"/classify",
         data: formData,
         processData: false,
         contentType: false,
         success: function(content) {
             console.log(content)
-            var urls = content.urls;
-            var tableBody = document.getElementById("linksTableBody")
-            tableBody.innerHTML = "";
+            let response = content.image_categories
+            alert("Image succesfully uploaded!")
+            //var urls = content.urls;
+            //var tableBody = document.getElementById("linksTableBody")
+            //tableBody.innerHTML = "";
             //document.getElementById("sendImage").disabled = true;
         }
     });
-}
-
-function getCheckedSizes(){
-    var ret = ""; //[];
-    var sizeChecks = document.getElementsByClassName("sizes");
-
-    for(check of sizeChecks){
-        if(check.checked == true) ret += check.value + ";"
-    }
-    console.log(ret);
-    return ret.slice(0, -1);
 }

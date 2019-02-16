@@ -34,6 +34,8 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="navbar-left {% if "/" == request.path %} active {% endif %}"><a href="/">Home</a></li>
+                    <li class="navbar-left {% if "/products" == request.path %} active {% endif %}"><a href="/products">Products</a></li>
+                    <li class="navbar-left {% if "/categories" == request.path %} active {% endif %}"><a href="/categories">Categories</a></li>
                 </ul>
             </div>
         </nav>
@@ -43,8 +45,6 @@
 
 
 {% endblock %}
-
- 	<script type="text/javascript" src="{% static "js/mainFunctions.js" %}"></script>
 
 
 </body>
