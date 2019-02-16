@@ -13,7 +13,7 @@ fileInput.addEventListener('change', function() {
 }, false);
 
 /*
-AJAX Request to resize image
+AJAX Request to classify image through Google Cloud API
 */
 
 function labelImage(){
@@ -37,6 +37,8 @@ function labelImage(){
         contentType: false,
         success: function(content) {
             console.log(content)
+            let response = content.image_categories
+            alert("Image succesfully uploaded!")
             //var urls = content.urls;
             //var tableBody = document.getElementById("linksTableBody")
             //tableBody.innerHTML = "";

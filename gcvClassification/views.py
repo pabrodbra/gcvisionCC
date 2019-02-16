@@ -19,12 +19,11 @@ class HomePageView(TemplateView):
 
 class ProductPageView(TemplateView):
     def get(self, request, **kwargs):
-        connection = sqlite3.connect("./database.sqlite3")
+        with sqlite3.connect("./database.sqlite3") as connection:
+            c = connection.cursor()
+            c.execute("SELECT * FROM products")
 
-        c = connection.cursor()
-        c.execute("SELECT * FROM products")
-
-        products = c.fetchall()
+            products = c.fetchall()
         
         user_input = request.GET.get('input')
         if not user_input:
@@ -34,20 +33,16 @@ class ProductPageView(TemplateView):
         for x in products:
             url = x[2] if "http" in x[2] else x[2].rsplit('/',1)[-1]
             rows.append({'category': x[0], 'url': url, 'score': round(x[1], 2)})
-            print(rows[-1])
-
-        print(rows)
 
         return render(request, 'list.html', context={'rows': rows, 'input': user_input})
 
 class CategoryPageView(TemplateView):
     def get(self, request, **kwargs):
-        connection = sqlite3.connect("./database.sqlite3")
+        with sqlite3.connect("./database.sqlite3") as connection:
+            c = connection.cursor()
+            c.execute("SELECT * FROM categories")
 
-        c = connection.cursor()
-        c.execute("SELECT * FROM categories")
-
-        categories = c.fetchall()
+            categories = c.fetchall()
         
         user_input = request.GET.get('input')
         if not user_input:
@@ -56,22 +51,52 @@ class CategoryPageView(TemplateView):
 
         rows = [{'description':category[0]} for category in categories]
 
-        print(rows)
-
         return render(request, 'list.html', context={'rows': rows, 'input': user_input})
 
+# GET API Request to get Products in database
 @csrf_exempt
 def APIgetProducts(request):
+    with sqlite3.connect("./database.sqlite3") as connection:
+        c = connection.cursor()
+        c.execute("SELECT * FROM products")
 
-    response = {'image_categories': image_categories}
+        products = c.fetchall()
+    
+    user_input = request.GET.get('input')
+    if not user_input:
+        user_input = ''
+    rows = []
+
+    for x in products:
+        if(user_input == '' or x[0] in user_input):
+            url = x[2] if "http" in x[2] else x[2].rsplit('/',1)[-1]
+            rows.append({'category': x[0], 'url': url, 'score': round(x[1], 2)})          
+
+    response = {'products': rows}
     return JsonResponse(response)
 
+# GET API Request to get Categories in database
 @csrf_exempt
 def APIgetCategory(request):
+    with sqlite3.connect("./database.sqlite3") as connection:
+        c = connection.cursor()
+        c.execute("SELECT * FROM categories")
+
+        categories = c.fetchall()
     
-    response = {'image_categories': image_categories}
+    user_input = request.GET.get('input')
+    if not user_input:
+        user_input = ''
+    rows = []
+
+    for x in categories:
+        if(user_input == '' or x[0] in user_input):
+            rows.append({'description': x[0]})      
+
+    response = {'categories': rows}
     return JsonResponse(response)
 
+# GET API Request to classify image and save the database information
 @csrf_exempt
 def classifyImage(request):
     image = request.FILES['image']
@@ -92,22 +117,23 @@ def classifyImage(request):
     response = client.label_detection(image=image)
     labels = response.label_annotations
 
-    connection = sqlite3.connect("./database.sqlite3")
-    c = connection.cursor()
+    with sqlite3.connect("./database.sqlite3") as connection:
+        c = connection.cursor()
 
-    c.execute("SELECT description FROM categories")
-    categories = c.fetchall()
-    categories = [category[0] for category in categories]
+        c.execute("SELECT description FROM categories")
+        categories = c.fetchall()
+        categories = [category[0] for category in categories]
 
-    image_categories = []
+        image_categories = []
 
-    for label in labels:
-        if (label.description.lower() in categories) and label.score >= 0.9:
-            image_categories.append({'score': label.score, 'category': label.description})
-            print("Included {} with percentage {} in category {}".format(file_name, label.score, label.description.lower()))
-            c.execute("INSERT INTO products (category, percentage, image_path) VALUES (?,?,?)", (label.description.lower(), label.score*100, file_name))
-    
-    connection.commit()
+        for label in labels:
+            if (label.description.lower() in categories) and label.score >= 0.9:
+                image_categories.append({'score': label.score, 'category': label.description})
+                print("Included {} with percentage {} in category {}".format(file_name, label.score, label.description.lower()))
+                c.execute("INSERT INTO products (category, percentage, image_path) VALUES (?,?,?)", (label.description.lower(), label.score*100, file_name))
+        
+        connection.commit()
+
     response = {'image_categories': image_categories}
     return JsonResponse(response)
 
