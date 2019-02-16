@@ -1,0 +1,31 @@
+{%extends "base.html"%}
+{%load staticfiles%}
+{%block content%}
+<div class="container bodyBlock">
+    <br/><br/>
+    <div class="row text-center center-block">
+        <div class="form-inline" style="margin-bottom: 16px;">
+            <form method="GET">
+              <input type="text" class="form-control" name="input" value="{{ input }}">
+              <button type="button" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+        {% for row in rows %}
+            {% if row.description and input in row.description%}
+            <div class="col-md-4" style="margin-bottom: 16px;">
+                <div >{{ row.description }}</div>
+            </div>
+            {% elif input in row.category %}
+            <div class="col-md-4" style="margin-bottom: 16px;">
+                {% if 'http' in row.url %}
+                <img src="{{ row.url }}" height="100" width="100">
+                {% else %}
+                <img src="/static/images/{{ row.url }}" height="100" width="100">
+                {% endif %}
+                <div class="overlay">{{ row.category }} - {{ row.score }}</div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
