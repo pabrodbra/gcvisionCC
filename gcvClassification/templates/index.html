@@ -3,19 +3,18 @@
 {%block content%}
     <div class="container bodyBlock">
         <!-- Image selection-->
-        <div class="col-md-3">
-            <div class="col-md-9">
+        <div class="col-md-6 align-middle">
+            <div class="col-md-6">
 
-                <h2>Image</h2>
-                <input id="inputImage" type="file" accept='image/*'>
-                <h2>Sizes</h2>
+                <h2>Images</h2>
+                <input id="inputImage" type="file" accept='image/*' multiple>
             </div>
 
-            <div class="col-md-3">
-                <button id="sendImage" type="button" class="btn btn-primary" disabled onclick="requestResize()"><span class="glyphicon glyphicon-send"></span></button>
+            <div class="col-md-6">
+                <button id="sendImage" type="button" class="btn btn-primary btn-lg" disabled onclick="labelImage()">Classify Images<span class="glyphicon glyphicon-send"></span></button>
             </div>
         </div>
-        <!-- URL Table of resized images -->
+        <!-- URL Table of resized images 
         <div id="linksTable" class="col-md-9">
             <table class="table table-hover">
                 <thead>
@@ -28,6 +27,6 @@
                 
                 </tbody>
             </table>
-        </div>
+        </div>-->
     </div>
 {% endblock %}
