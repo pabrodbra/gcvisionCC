@@ -1,0 +1,33 @@
+{%extends "base.html"%}
+{%load staticfiles%}
+{%block content%}
+    <div class="container bodyBlock">
+        <!-- Image selection-->
+        <div class="col-md-3">
+            <div class="col-md-9">
+
+                <h2>Image</h2>
+                <input id="inputImage" type="file" accept='image/*'>
+                <h2>Sizes</h2>
+            </div>
+
+            <div class="col-md-3">
+                <button id="sendImage" type="button" class="btn btn-primary" disabled onclick="requestResize()"><span class="glyphicon glyphicon-send"></span></button>
+            </div>
+        </div>
+        <!-- URL Table of resized images -->
+        <div id="linksTable" class="col-md-9">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Size</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="linksTableBody">
+                
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
